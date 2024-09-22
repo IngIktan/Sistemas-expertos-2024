@@ -1,0 +1,11 @@
+HOLA - ¡Hola! ¿Cómo estás?
+hola - ¡Hola! ¿Cómo estás?
+Como estas? - Estoy bien, gracias. ¿Y tú?
+COMO ESTAS? - Estoy bien, gracias. ¿Y tú?
+como estas? - Estoy bien, gracias. ¿Y tú?
+como estas - Estoy bien, gracias. ¿Y tú?
+de que te gustaria hablar?  - Podemos hablar de lo que quieras. Pregúntame algo.
+De que te gustaria hablar? - Podemos hablar de lo que quieras. Pregúntame algo.
+de que te gustaria hablar - Podemos hablar de lo que quieras. Pregúntame algo.
+DE QUE TE GUSTARIA HABLAR? - Podemos hablar de lo que quieras. Pregúntame algo.
+DE QUE TE GUSTARIA HABLAR - Podemos hablar de lo que quieras. Pregúntame algo.
