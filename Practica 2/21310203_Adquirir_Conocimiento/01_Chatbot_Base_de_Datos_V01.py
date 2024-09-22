@@ -1,3 +1,8 @@
+#Ing.Daniel Alejandro Flores Sepulveda 
+#Ing. Mecatronico
+#21310203       
+
+
 # Función para leer las respuestas de la base de datos
 def leer_respuestas():
     try:
