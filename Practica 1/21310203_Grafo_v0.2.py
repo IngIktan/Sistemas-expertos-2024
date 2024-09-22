@@ -1,3 +1,8 @@
+#Ing.Daniel Alejandro Flores Sepulveda 
+#Ing. Mecatronico
+#21310203       
+
+
 import networkx as nx
 import matplotlib.pyplot as plt
 from collections import deque
