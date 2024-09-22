@@ -13,7 +13,7 @@ def leer_respuestas():
 
 # Función para agregar una nueva respuesta a la base de datos
 def agregar_respuesta(pregunta, respuesta):
-    with open('base_de_datos.txt', 'a') as file:
+    with open('base_de_datos_2).txt', 'a') as file:
         file.write(f"{pregunta} - {respuesta}\n")
     mostrar_mensaje(f"Nueva respuesta guardada: {pregunta} - {respuesta}")
 
