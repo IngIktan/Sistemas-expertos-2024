@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clue - Shrek Edition</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+<div class="container">
+    <div id="gameArea"></div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const suspects = [
+            { name: 'Shrek', img: 'shrek.jpg' },
+            { name: 'Fiona', img: 'fiona.jpg' },
+            { name: 'Burro', img: 'burro.jpg' },
+            { name: 'Lord Farquaad', img: 'farquaad.jpg' },
+            { name: 'El Gato con Botas', img: 'gato.jpg' }
+        ];
+
+        const weapons = [
+            { name: 'Pastel', img: 'pastel.jpg' },
+            { name: 'Pierna de Pollo', img: 'pollo.jpg' },
+            { name: 'Queso Gruyère', img: 'queso.jpg' },
+            { name: 'Sopa de Cebolla', img: 'sopa.jpg' },
+            { name: 'Pan', img: 'pan.jpg' }
+        ];
+
+        const locations = [
+            { name: 'Pantano', img: 'pantano.jpg' },
+            { name: 'Castillo de Lord Farquaad', img: 'castillo.jpg' },
+            { name: 'Duloc', img: 'duloc.jpg' },
+            { name: 'La casa de Fiona', img: 'casa_fiona.jpg' },
+            { name: 'Molino de viento', img: 'molino.jpg' }
+        ];
+
+        let culprit, weapon, location;
+        let remainingAttempts = 5;
+        const gameArea = document.getElementById('gameArea');
+
+        // Función para mostrar la pantalla de bienvenida
+        function showWelcomePage() {
+            clearGameArea();
+
+            const welcomeText = document.createElement('p');
+            welcomeText.textContent = "Ha ocurrido un crimen en Muy Muy Lejano. Han asesinado a la dragona. Deberás ayudarnos a investigar el crimen y en dónde fue enterrado el cuerpo.";
+            gameArea.appendChild(welcomeText);
+
+            const continueButton = createButton('Continuar', startInvestigation);
+            gameArea.appendChild(continueButton);
+        }
+
+        // Función para iniciar la investigación
+        function startInvestigation() {
+            culprit = suspects[Math.floor(Math.random() * suspects.length)];
+            weapon = weapons[Math.floor(Math.random() * weapons.length)];
+            location = locations[Math.floor(Math.random() * locations.length)];
+            remainingAttempts = 5;
+            showClueOptions();
+        }
+
+        // Mostrar las opciones de pistas
+        function showClueOptions() {
+            if (remainingAttempts > 0) {
+                clearGameArea();
+                
+                const title = document.createElement('h2');
+                title.textContent = `Selecciona una pista para investigar (Intentos restantes: ${remainingAttempts}):`;
+                gameArea.appendChild(title);
+
+                const suspectButton = createButton('Interrogar Personaje', askSuspects);
+                const weaponButton = createButton('Investigar Comida', askWeapon);
+                const locationButton = createButton('Investigar Ubicación', askLocation);
+
+                gameArea.appendChild(suspectButton);
+                gameArea.appendChild(weaponButton);
+                gameArea.appendChild(locationButton);
+            } else {
+                askFinalGuess();
+            }
+        }
+
+        // Mostrar opciones de personajes
+        function askSuspects() {
+            if (remainingAttempts > 0) {
+                clearGameArea();
+                
+                const title = document.createElement('h2');
+                title.textContent = "Selecciona un personaje para interrogar:";
+                gameArea.appendChild(title);
+
+                suspects.forEach(suspect => {
+                    const suspectButton = createButton(suspect.name, () => showSuspectInfo(suspect));
+                    gameArea.appendChild(suspectButton);
+                });
+
+                const backButton = createButton('Regresar', showClueOptions);
+                gameArea.appendChild(backButton);
+            } else {
+                askFinalGuess();
+            }
+        }
+
+        // Mostrar información del personaje seleccionado
+        function showSuspectInfo(suspect) {
+            clearGameArea();
+            remainingAttempts--;
+
+            const title = document.createElement('h2');
+            title.textContent = `Información de ${suspect.name}:`;
+            gameArea.appendChild(title);
+
+            const imgElement = document.createElement('img');
+            imgElement.src = suspect.img;
+            imgElement.alt = suspect.name;
+            imgElement.classList.add('character-img');
+            gameArea.appendChild(imgElement);
+
+            const clues = suspect.name === culprit.name
+                ? `${suspect.name} fue visto cerca del ${location.name}. Algunos testigos lo vieron sosteniendo algo parecido al ${weapon.name}.`
+                : `${suspect.name} fue visto en otro lugar y no parece sospechoso.`;
+
+            const clueParagraph = document.createElement('p');
+            clueParagraph.textContent = clues;
+            gameArea.appendChild(clueParagraph);
+
+            const backButton = createButton('Regresar', askSuspects);
+            gameArea.appendChild(backButton);
+        }
+
+        // Mostrar opciones de armas
+        function askWeapon() {
+            if (remainingAttempts > 0) {
+                clearGameArea();
+
+                const title = document.createElement('h2');
+                title.textContent = "Selecciona un arma para investigar:";
+                gameArea.appendChild(title);
+
+                weapons.forEach(w => {
+                    const weaponButton = createButton(w.name, () => showWeaponInfo(w));
+                    gameArea.appendChild(weaponButton);
+                });
+
+                const backButton = createButton('Regresar', showClueOptions);
+                gameArea.appendChild(backButton);
+            } else {
+                askFinalGuess();
+            }
+        }
+
+        // Mostrar información del arma seleccionada
+        function showWeaponInfo(w) {
+            clearGameArea();
+            remainingAttempts--;
+
+            const title = document.createElement('h2');
+            title.textContent = `Información del arma ${w.name}:`;
+            gameArea.appendChild(title);
+
+            const imgElement = document.createElement('img');
+            imgElement.src = w.img;
+            imgElement.alt = w.name;
+            imgElement.classList.add('weapon-img');
+            gameArea.appendChild(imgElement);
+
+            const clues = w.name === weapon.name
+                ? `El ${w.name} fue usado recientemente y tiene huellas sospechosas.`
+                : `El ${w.name} parece estar intacto y no fue usado.`;
+
+            const clueParagraph = document.createElement('p');
+            clueParagraph.textContent = clues;
+            gameArea.appendChild(clueParagraph);
+
+            const backButton = createButton('Regresar', askWeapon);
+            gameArea.appendChild(backButton);
+        }
+
+        // Mostrar opciones de ubicaciones
+        function askLocation() {
+            if (remainingAttempts > 0) {
+                clearGameArea();
+
+                const title = document.createElement('h2');
+                title.textContent = "Selecciona una ubicación para investigar:";
+                gameArea.appendChild(title);
+
+                locations.forEach(l => {
+                    const locationButton = createButton(l.name, () => showLocationInfo(l));
+                    gameArea.appendChild(locationButton);
+                });
+
+                const backButton = createButton('Regresar', showClueOptions);
+                gameArea.appendChild(backButton);
+            } else {
+                askFinalGuess();
+            }
+        }
+
+        // Mostrar información de la ubicación seleccionada
+        function showLocationInfo(l) {
+            clearGameArea();
+            remainingAttempts--;
+
+            const title = document.createElement('h2');
+            title.textContent = `Información de la ubicación ${l.name}:`;
+            gameArea.appendChild(title);
+
+            const imgElement = document.createElement('img');
+            imgElement.src = l.img;
+            imgElement.alt = l.name;
+            imgElement.classList.add('location-img');
+            gameArea.appendChild(imgElement);
+
+            const clues = l.name === location.name
+                ? `Se encontraron huellas extrañas y ruidos sospechosos en el ${l.name}.`
+                : `No parece haber nada fuera de lo común en el ${l.name}.`;
+
+            const clueParagraph = document.createElement('p');
+            clueParagraph.textContent = clues;
+            gameArea.appendChild(clueParagraph);
+
+            const backButton = createButton('Regresar', askLocation);
+            gameArea.appendChild(backButton);
+        }
+
+        // Al finalizar los intentos, el jugador debe hacer una conjetura final
+        function askFinalGuess() {
+            clearGameArea();
+
+            const title = document.createElement('h2');
+            title.textContent = "Se han agotado los intentos. Haz tu conjetura final:";
+            gameArea.appendChild(title);
+
+            const guessCulprit = createDropdown(suspects.map(s => s.name), "¿Quién es el culpable?");
+            const guessWeapon = createDropdown(weapons.map(w => w.name), "¿Cuál es el arma?");
+            const guessLocation = createDropdown(locations.map(l => l.name), "¿Dónde ocurrió?");
+            
+            gameArea.appendChild(guessCulprit.selectElement);
+            gameArea.appendChild(guessWeapon.selectElement);
+            gameArea.appendChild(guessLocation.selectElement);
+
+            const submitButton = createButton('Enviar conjetura', () => checkFinalGuess(guessCulprit.selectedValue(), guessWeapon.selectedValue(), guessLocation.selectedValue()));
+            gameArea.appendChild(submitButton);
+        }
+
+        // Verificar la conjetura final
+        function checkFinalGuess(guessCulprit, guessWeapon, guessLocation) {
+            if (guessCulprit === culprit.name && guessWeapon === weapon.name && guessLocation === location.name) {
+                alert("¡Ganaste! Adivinaste correctamente.");
+            } else {
+                alert(`Incorrecto. El culpable era ${culprit.name}, con el ${weapon.name} en el ${location.name}.`);
+            }
+            showRestartButton();
+        }
+
+        // Mostrar botón para reiniciar el juego
+        function showRestartButton() {
+            clearGameArea();
+
+            const restartButton = createButton('Reiniciar Juego', showWelcomePage);
+            gameArea.appendChild(restartButton);
+        }
+
+        // Función para crear botones reutilizables
+        function createButton(text, onClick) {
+            const button = document.createElement('button');
+            button.textContent = text;
+            button.onclick = onClick;
+            return button;
+        }
+
+        // Función para crear dropdowns (menús desplegables)
+        function createDropdown(options, label) {
+            const wrapper = document.createElement('div');
+            const labelElement = document.createElement('label');
+            labelElement.textContent = label;
+            wrapper.appendChild(labelElement);
+
+            const selectElement = document.createElement('select');
+            options.forEach(option => {
+                const optionElement = document.createElement('option');
+                optionElement.value = option;
+                optionElement.textContent = option;
+                selectElement.appendChild(optionElement);
+            });
+
+            wrapper.appendChild(selectElement);
+
+            return {
+                selectElement: wrapper,
+                selectedValue: () => selectElement.value
+            };
+        }
+
+        // Limpiar el área de juego
+        function clearGameArea() {
+            gameArea.innerHTML = '';
+        }
+
+        // Mostrar la página de bienvenida al cargar
+        showWelcomePage();
+    });
+</script>
+
+</body>
+</html>

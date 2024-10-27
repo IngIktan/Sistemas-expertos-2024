@@ -1,0 +1,80 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f8ff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    width: 600px;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+}
+
+h1 {
+    color: #4CAF50;
+    font-size: 2em;
+}
+
+h2 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 1.1em;
+    color: #555;
+}
+
+button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1.1em;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+#gameArea {
+    margin-top: 20px;
+}
+
+.suspect-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px;
+}
+
+button.back {
+    background-color: #f44336;
+}
+
+button.back:hover {
+    background-color: #d32f2f;
+}
+
+.character-img, .weapon-img, .location-img {
+    width: auto;          /* Deja que la altura se ajuste automáticamente para mantener la proporción */
+    height: 150px;        /* Altura fija */
+    max-width: 100%;      /* La imagen no excederá el ancho del contenedor */
+    margin-bottom: 20px;
+    border-radius: 10px;  /* Añade bordes redondeados si lo deseas */
+    object-fit: contain;  /* Asegura que la imagen se ajuste dentro del contenedor sin distorsión */
+}
