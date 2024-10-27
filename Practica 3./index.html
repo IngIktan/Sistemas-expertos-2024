@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de preguntas</title>
+</head>
+<body>
+    <style>
+        * {
+            transition: all 0.3s;
+        }
+        body {
+            background-color: slategrey;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+        }
+
+        .contenedor {
+            width: 98vw;
+            height: 97vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid white;
+        }
+
+        .encabezado {
+            background: white;
+            min-width: 300px;
+            width: 70%;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .Categoria {
+            opacity: 0.3;
+            text-align: left;
+        }
+
+        .pregunta {
+            padding: 10px;
+        }
+
+        .imagen {
+            object-fit: cover;
+            height: 100px;
+            width: 200px;
+            background: white;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background: white;
+            width: 60%;
+            padding: 10px;
+            margin: 5px;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: orange;
+            cursor: pointer;
+        }
+
+        .btn.correcto {
+            background-color: green !important;
+            color: white;
+        }
+
+        .btn.incorrecto {
+            background-color: red !important;
+            color: white;
+        }
+
+        .contador {
+            margin-top: 20px;
+            font-size: 20px;
+            color: white;
+        }
+    </style>
+    
+    <div class="contador">
+        Aciertos: <span id="aciertos">0</span> | Fallos: <span id="fallos">0</span>
+    </div>
+
+    <div class="contenedor">
+        <div class="encabezado">
+            <div class="Categoria" id="Categoria">Categoria</div>
+            <div class="pregunta" id="pregunta">Pregunta</div>
+            <img src="" class="imagen" id="imagen" />
+        </div>
+        <div class="btn" id="1" onclick="seleccionarOpcion(0)">Opción 1</div>
+        <div class="btn" id="2" onclick="seleccionarOpcion(1)">Opción 2</div>
+        <div class="btn" id="3" onclick="seleccionarOpcion(2)">Opción 3</div>
+        <div class="btn" id="4" onclick="seleccionarOpcion(3)">Opción 4</div>
+    </div>
+
+    <script>
+        let aciertos = 0;
+        let fallos = 0;
+        let preguntaActual = 0;
+        let preguntas;
+
+        // Función para leer el archivo JSON de forma sincrónica
+        function readText(ruta_local) {
+            var texto = null;
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.open("GET", ruta_local, false);  // Síncrono
+            xmlhttp.send();
+            if (xmlhttp.status == 200) {
+                texto = xmlhttp.responseText;
+            }
+            return texto;
+        }
+
+        // Función para seleccionar elementos por ID
+        function select_id(id) {
+            return document.getElementById(id);
+        }
+
+        // Función para mostrar la pregunta actual
+        function mostrarPregunta(n) {
+            let pregunta = preguntas[n];
+            select_id("Categoria").innerHTML = pregunta.categoria;
+            select_id("pregunta").innerHTML = pregunta.pregunta;
+            select_id("1").innerHTML = pregunta.opciones[0];
+            select_id("2").innerHTML = pregunta.opciones[1];
+            select_id("3").innerHTML = pregunta.opciones[2];
+            select_id("4").innerHTML = pregunta.opciones[3];
+        }
+
+        // Función para seleccionar una opción
+        function seleccionarOpcion(opcionSeleccionada) {
+            let pregunta = preguntas[preguntaActual];
+            let botones = document.getElementsByClassName("btn");
+
+            // Verificamos si la opción seleccionada es correcta
+            if (pregunta.opciones[opcionSeleccionada] === pregunta.respuesta_correcta) {
+                botones[opcionSeleccionada].classList.add("correcto");
+                aciertos++;
+            } else {
+                botones[opcionSeleccionada].classList.add("incorrecto");
+                fallos++;
+            }
+
+            // Actualizamos el contador
+            actualizarContador();
+
+            // Esperamos un segundo para mostrar la siguiente pregunta
+            setTimeout(function() {
+                limpiarEstilos();
+                siguientePregunta();
+            }, 1000);
+        }
+
+        // Función para avanzar a la siguiente pregunta
+        function siguientePregunta() {
+            preguntaActual++;
+            if (preguntaActual < preguntas.length) {
+                mostrarPregunta(preguntaActual);
+            } else {
+                alert("Juego terminado. Aciertos: " + aciertos + " | Fallos: " + fallos);
+                preguntaActual = 0;
+                aciertos = 0;
+                fallos = 0;
+                actualizarContador();
+                mostrarPregunta(preguntaActual);
+            }
+        }
+
+        // Función para actualizar el contador de aciertos y fallos
+        function actualizarContador() {
+            select_id("aciertos").innerHTML = aciertos;
+            select_id("fallos").innerHTML = fallos;
+        }
+
+        // Función para limpiar los estilos de los botones
+        function limpiarEstilos() {
+            let botones = document.getElementsByClassName("btn");
+            for (let i = 0; i < botones.length; i++) {
+                botones[i].classList.remove("correcto", "incorrecto");
+            }
+        }
+
+        // Cargamos las preguntas del archivo JSON
+        preguntas = JSON.parse(readText("base-preguntas.json"));
+
+        // Mostramos la primera pregunta al iniciar el juego
+        mostrarPregunta(0);
+    </script>
+</body>
+</html>
