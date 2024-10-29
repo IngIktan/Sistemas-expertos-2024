@@ -1,0 +1,27 @@
+[
+    {
+        "name": "Shrek",
+        "answers": ["no", "sí", "no", "no", "sí"],
+        "image": "https://t4.ftcdn.net/jpg/05/59/91/77/360_F_559917754_dPi14NuRWEofju2XA0Jz07kSITgjYYJm.jpg"
+    },
+    {
+        "name": "Fiona",
+        "answers": ["sí", "sí", "no", "no", "no"],
+        "image": "https://i.pinimg.com/550x/1f/35/30/1f3530caf16a1895f3bd4f1ef2dc02d2.jpg"
+    },
+    {
+        "name": "Burro",
+        "answers": ["no", "sí", "no", "sí", "no"],
+        "image": "https://www.debate.com.mx/__export/1719262985734/sites/debate/img/2024/06/24/shrek-burro.jpg_1902800913.jpg"
+    },
+    {
+        "name": "Gato con Botas",
+        "answers": ["no", "sí", "no", "sí", "no"],
+        "image": "https://i.ytimg.com/vi/fSAF_Ro0bhY/maxresdefault.jpg"
+    },
+    {
+        "name": "Hada Madrina",
+        "answers": ["sí", "sí", "sí", "no", "no"],
+        "image": "https://i.pinimg.com/736x/93/1f/78/931f7884dd6b3f4f869ae2b465a02f58.jpg"
+    }
+]

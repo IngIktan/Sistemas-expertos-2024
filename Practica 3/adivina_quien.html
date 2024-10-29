@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adivina Quién - Shrek</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+            padding: 20px;
+        }
+        .question {
+            margin: 20px 0;
+        }
+        .btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .form-section {
+            margin-top: 40px;
+        }
+        img {
+            max-width: 300px;
+            margin-top: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Adivina Quién - Shrek</h1>
+    <p>Responde las preguntas para adivinar qué personaje de Shrek estás pensando.</p>
+
+    <div id="question-container" class="question">
+        <p id="question">¿El personaje es humano?</p>
+        <button class="btn" onclick="answer('yes')">Sí</button>
+        <button class="btn" onclick="answer('no')">No</button>
+    </div>
+
+    <div id="result-container" class="question" style="display: none;">
+        <p id="result"></p>
+        <img id="character-image" src="" alt="Imagen del personaje" style="display: none;">
+        <button class="btn" onclick="resetGame()">Jugar de nuevo</button>
+    </div>
+
+    <div class="form-section">
+        <h2>Agregar un nuevo personaje</h2>
+        <form id="new-character-form">
+            <label for="name">Nombre del personaje:</label><br>
+            <input type="text" id="name" name="name" required><br><br>
+
+            <label for="image">URL de la imagen:</label><br>
+            <input type="text" id="image" name="image" required><br><br>
+
+            <label>Responde las preguntas para el personaje:</label><br>
+            <label>¿El personaje es humano?</label><br>
+            <input type="radio" name="q1" value="sí" required> Sí
+            <input type="radio" name="q1" value="no"> No<br><br>
+
+            <label>¿El personaje tiene un gran papel en la película?</label><br>
+            <input type="radio" name="q2" value="sí" required> Sí
+            <input type="radio" name="q2" value="no"> No<br><br>
+
+            <label>¿El personaje tiene poderes mágicos?</label><br>
+            <input type="radio" name="q3" value="sí" required> Sí
+            <input type="radio" name="q3" value="no"> No<br><br>
+
+            <label>¿El personaje es un animal?</label><br>
+            <input type="radio" name="q4" value="sí" required> Sí
+            <input type="radio" name="q4" value="no"> No<br><br>
+
+            <label>¿El personaje vive en el pantano?</label><br>
+            <input type="radio" name="q5" value="sí" required> Sí
+            <input type="radio" name="q5" value="no"> No<br><br>
+
+            <button type="submit" class="btn">Agregar personaje</button>
+        </form>
+    </div>
+
+    <script>
+        let questions = [
+            "¿El personaje es humano?",
+            "¿El personaje tiene un gran papel en la película?",
+            "¿El personaje tiene poderes mágicos?",
+            "¿El personaje es un animal?",
+            "¿El personaje vive en el pantano?"
+        ];
+
+        let answers = [];
+        let currentQuestionIndex = 0;
+        let characters;
+        let matchingCharacters = [];
+
+        // Cargar personajes desde el archivo JSON
+        fetch('characters.json')
+            .then(response => response.json())
+            .then(data => {
+                characters = data;
+            });
+
+        function answer(response) {
+            answers.push(response === 'yes' ? 'sí' : 'no'); // Normalizamos las respuestas
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < questions.length) {
+                document.getElementById("question").innerText = questions[currentQuestionIndex];
+            } else {
+                filterCharacters();
+            }
+        }
+
+        function filterCharacters() {
+            matchingCharacters = characters.filter(char => {
+                return char.answers.every((ans, index) => ans === answers[index]);
+            });
+
+            if (matchingCharacters.length === 1) {
+                // Si solo hay un personaje coincidente, mostrarlo
+                showResult(matchingCharacters[0]);
+            } else if (matchingCharacters.length > 1) {
+                // Si hay varios personajes coincidentes, hacer una pregunta adicional
+                askAdditionalQuestion();
+            } else {
+                document.getElementById("result").innerText = "No pudimos adivinar el personaje.";
+                document.getElementById("character-image").style.display = "none";
+                document.getElementById("question-container").style.display = "none";
+                document.getElementById("result-container").style.display = "block";
+            }
+        }
+
+        function askAdditionalQuestion() {
+            // Seleccionar el primer personaje coincidente y hacer una pregunta sobre él
+            let firstCharacter = matchingCharacters[0];
+            let question = `¿El personaje es ${firstCharacter.name}?`;
+            document.getElementById("question").innerText = question;
+
+            // Modificar los botones para manejar la respuesta adicional
+            document.querySelector(".btn:nth-child(2)").setAttribute("onclick", "confirmCharacter('yes')");
+            document.querySelector(".btn:nth-child(3)").setAttribute("onclick", "confirmCharacter('no')");
+        }
+
+        function confirmCharacter(response) {
+            if (response === 'yes') {
+                showResult(matchingCharacters[0]);
+            } else {
+                // Si no es el primer personaje, pasar al siguiente coincidente
+                if (matchingCharacters.length > 1) {
+                    matchingCharacters.shift(); // Remover el primer personaje
+                    if (matchingCharacters.length === 1) {
+                        showResult(matchingCharacters[0]); // Mostrar el siguiente personaje si es el único restante
+                    } else {
+                        askAdditionalQuestion(); // Volver a preguntar por el siguiente
+                    }
+                }
+            }
+        }
+
+        function showResult(character) {
+            document.getElementById("result").innerText = `¡El personaje es ${character.name}!`;
+            document.getElementById("character-image").src = character.image;
+            document.getElementById("character-image").style.display = "block";
+
+            document.getElementById("question-container").style.display = "none";
+            document.getElementById("result-container").style.display = "block";
+        }
+
+        function resetGame() {
+            answers = [];
+            currentQuestionIndex = 0;
+            document.getElementById("question").innerText = questions[0];
+            document.getElementById("question-container").style.display = "block";
+            document.getElementById("result-container").style.display = "none";
+            document.getElementById("character-image").style.display = "none";
+
+            // Restaurar las funciones originales de los botones
+            document.querySelector(".btn:nth-child(2)").setAttribute("onclick", "answer('yes')");
+            document.querySelector(".btn:nth-child(3)").setAttribute("onclick", "answer('no')");
+        }
+
+        // Agregar un nuevo personaje
+        document.getElementById('new-character-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            let newCharacter = {
+                name: document.getElementById('name').value,
+                image: document.getElementById('image').value,
+                answers: [
+                    document.querySelector('input[name="q1"]:checked').value,
+                    document.querySelector('input[name="q2"]:checked').value,
+                    document.querySelector('input[name="q3"]:checked').value,
+                    document.querySelector('input[name="q4"]:checked').value,
+                    document.querySelector('input[name="q5"]:checked').value
+                ]
+            };
+            characters.push(newCharacter);
+            alert(`¡${newCharacter.name} ha sido agregado!`);
+            this.reset(); // Limpiar el formulario después de agregar el personaje
+
+            // Actualizar el archivo JSON (simulación)
+            saveCharactersToJson();
+        });
+
+        function saveCharactersToJson() {
+            // Simulación de guardado en el archivo JSON
+            console.log("Personajes actualizados:", characters);
+            // En un entorno real, aquí iría el código para actualizar el archivo JSON en el servidor
+        }
+    </script>
+
+</body>
+</html>
